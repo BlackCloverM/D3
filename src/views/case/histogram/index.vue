@@ -1,16 +1,8 @@
-<!--
- * @Author: 马永华
- * @Date: 2020-05-13 10:52:53
- * @LastEditors: 马永华
- * @LastEditTime: 2020-05-15 16:42:07
- * @Description: 疫情动态数据，纵向柱状图——来源百度报告  2020-05-13
- -->
-
 <template>
   <div>
     <h3>国外疫情TOP10——百度</h3>
     <div class="toolTip">
-      <div class="country">美国</div>
+      <div class="country"></div>
       <div class="incre">
         <span class="icon"></span>新增：<span class="amount">18951</span>
       </div>
@@ -18,7 +10,6 @@
     <svg width="1000" height="600"></svg>
   </div>
 </template>
-
 <script>
 import * as d3 from "d3";
 export default {
@@ -38,23 +29,26 @@ export default {
       ]
     };
   },
+
   mounted() {
     const _this = this;
     const rectWidth = 20; //定义矩形的宽度
-    const interval = 20; //定义矩形间的间隔
-    const baseLine = 450;
-    const xLength = (rectWidth + interval) * this.epidemicData.length;
-    const yLength = 420;
-    const xTick = this.epidemicData.length;
-    const yTick = 6;
-    const height = d3
+    const yLength = 420; //柱状图y轴的长度
+    //定义矩形的高度
+    const rectHeight = d3
       .scaleLinear()
-      .domain([0, this.maxHeight()])
+      .domain([0, this.maxHeight() + 5000])
       .range([0, yLength]);
-
+    const interval = 20; //定义矩形间的间隔
+    //柱状图x轴的长度
+    const xLength = (rectWidth + interval) * this.epidemicData.length;
+    const baseLine = 450; //定义一个基线的位置，调整柱状图的位置
+    const xTick = this.epidemicData.length; //x轴的刻度数目
+    const yTick = 6; //y轴刻度数目
     let svg = d3.select("svg");
+    //g——分组，可以简单的将他视为一个容器的作用
     let g = svg.append("g");
-    let gy = g.append("g");
+    let gy = g.append("g"); //将分组提前，改变d3的层级
     let rect = g
       .attr("transform", "translate(" + 100 + ", " + 0 + ")")
       .selectAll("rect")
@@ -62,9 +56,9 @@ export default {
       .enter()
       .append("rect")
       .attr("x", (d, i) => i * (rectWidth + interval))
-      .attr("y", d => baseLine - height(d.amount))
+      .attr("y", d => baseLine - rectHeight(d.amount))
       .attr("width", rectWidth)
-      .attr("height", d => height(d.amount))
+      .attr("height", d => rectHeight(d.amount))
       .attr("fill", d => {
         return this.retColor(d.amount);
       });
@@ -82,7 +76,6 @@ export default {
           .transition()
           .attr("fill", _this.retColor(d.amount));
       });
-
     //画出x轴
     let xScale = d3
       .scaleBand()
@@ -103,11 +96,12 @@ export default {
       .attr("transform", "rotate(" + -45 + ")");
     gx.selectAll("line").attr("stroke", "");
     gx.selectAll("path").attr("stroke", "");
-    // .attr("d", "M0.5,0H400.5");
+
     //画出y轴
+
     let yScale = d3
       .scaleLinear()
-      .domain([0, this.maxHeight()])
+      .domain([0, this.maxHeight() + 5000])
       .range([yLength, 0]);
     let yAxis = d3.axisLeft(yScale).ticks(yTick);
 
@@ -121,12 +115,6 @@ export default {
       .attr("stroke-width", 0.5);
     gy.selectAll("path").attr("stroke", "");
     gy.selectAll("text").style("color", "#bebebe");
-    g.append("text")
-      .text("单位：例")
-      .attr("transform", "translate(" + -60 + ", " + 20 + ")")
-      .style("color", "#bebebe")
-      .attr("fill", "currentColor")
-      .attr("font-size", 12);
   },
 
   methods: {
@@ -136,14 +124,7 @@ export default {
         return total > curVal.amount ? total : curVal.amount;
       }, 0);
     },
-    //将epidemicData中的国家单独抽成一个数组
-    address() {
-      return this.epidemicData.reduce((total, curVal) => {
-        total.push(curVal.name);
-        return total;
-      }, []);
-    },
-    //根据数值返回颜色
+    //根据数值范围返回颜色字符串
     retColor(amount) {
       if (amount < 6000) {
         return "#f6b46c";
@@ -152,6 +133,13 @@ export default {
       } else {
         return "#d92121";
       }
+    },
+    //将epidemicData中的国家单独抽成一个数组
+    address() {
+      return this.epidemicData.reduce((total, curVal) => {
+        total.push(curVal.name);
+        return total;
+      }, []);
     },
     //节流
     throttle(fn, duration) {
@@ -164,7 +152,7 @@ export default {
         }
       };
     },
-    //在矩形上移动发生的事件
+    //在矩形上移动产生的变化
     moveEvent(d) {
       let mouse = d3.event;
       let yPosition = mouse.pageY + 20;
@@ -181,7 +169,6 @@ export default {
   }
 };
 </script>
-
 <style lang="scss" scoped>
 .toolTip {
   position: absolute;

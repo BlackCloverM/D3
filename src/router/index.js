@@ -1,8 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import LineChart from "../views/lineChart";
-import Histogram from "../views/histogram";
-import ColumnHistogram from "../views/epidemic/columnHistogram.vue";
+import LineChart from "../views/case/lineChart";
+import Demo from "../views/";
+import Histogram from "../views/case/histogram/";
+import PieChart from "../views/case/pieChart/";
 
 Vue.use(VueRouter);
 
@@ -13,14 +14,19 @@ const routes = [
     component: LineChart
   },
   {
-    path: "/Histogram",
+    path: "/demo",
+    name: "demo",
+    component: Demo
+  },
+  {
+    path: "/histogram",
     name: "histogram",
     component: Histogram
   },
   {
-    path: "/epidemic/column",
-    name: "epiColumn",
-    component: ColumnHistogram
+    path: "/pieChart",
+    name: "pieChart",
+    component: PieChart
   }
 ];
 
