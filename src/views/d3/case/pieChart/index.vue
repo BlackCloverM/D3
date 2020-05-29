@@ -74,6 +74,7 @@ export default {
       .attr("fill", function(d, i) {
         return colorScale(i);
       });
+    //添加文字
     gs.append("text")
       .attr("transform", function(d) {
         return "translate(" + arc.centroid(d) + ")";
@@ -85,5 +86,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped></style>

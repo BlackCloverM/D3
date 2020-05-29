@@ -1,32 +1,28 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import LineChart from "../views/case/lineChart";
-import Demo from "../views/";
-import Histogram from "../views/case/histogram/";
-import PieChart from "../views/case/pieChart/";
+import Demo from "views/";
+import D3 from "views/d3";
+import d3children from "./moudule/d3";
+import G2 from "views/g2";
+import g2children from "./moudule/g2";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/lineChart",
-    name: "lineChart",
-    component: LineChart
-  },
-  {
-    path: "/demo",
+    path: "/",
     name: "demo",
     component: Demo
   },
   {
-    path: "/histogram",
-    name: "histogram",
-    component: Histogram
+    path: "/d3",
+    component: D3,
+    children: d3children
   },
   {
-    path: "/pieChart",
-    name: "pieChart",
-    component: PieChart
+    path: "/g2",
+    component: G2,
+    children: g2children
   }
 ];
 

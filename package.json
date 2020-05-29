@@ -9,10 +9,12 @@
     "webpack-defaults": "webpack-defaults"
   },
   "dependencies": {
+    "@antv/g2": "^4.0.8",
     "cli-plugin-eslint": "^0.0.1",
     "cli-service": "^0.0.2",
     "core-js": "^3.6.4",
     "d3": "^5.16.0",
+    "d3-geo": "^1.12.0",
     "eslint": "^7.0.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
