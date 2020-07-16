@@ -1,39 +1,56 @@
-import LineChart from "views/d3/case/lineChart";
-import Histogram from "views/d3/case/histogram/";
-import PieChart from "views/d3/case/pieChart/";
-import ForceMap from "views/d3/case/forceMap/";
-import Tree from "views/d3/case/tree/";
-import China from "views/d3/case/mapOfChina/";
-
 export default [
   {
     path: "/",
-    name: "d3lineChart",
-    component: LineChart
+    redirect: "/d3/lineChart"
+  },
+  {
+    path: "lineChart",
+    component: () => import("views/d3/case/lineChart")
   },
   {
     path: "histogram",
-    name: "d3histogram",
-    component: Histogram
+    component: () => import("views/d3/case/histogram/")
   },
   {
     path: "pieChart",
-    name: "d3pieChart",
-    component: PieChart
+    component: () => import("views/d3/case/pieChart/")
   },
   {
     path: "forceMap",
-    name: "fd3orceMap",
-    component: ForceMap
+    component: () => import("views/d3/case/forceMap/")
   },
   {
     path: "tree",
-    name: "d3tree",
-    component: Tree
+    component: () => import("views/d3/case/tree/")
   },
   {
     path: "china",
-    name: "d3china",
-    component: China
+    component: () => import("views/d3/case/mapOfChina/")
+  },
+  {
+    path: "areaChart",
+    component: () => import("views/d3/case/areaChart/"),
+    children: [
+      {
+        path: "",
+        redirect: "demo01"
+      },
+      {
+        path: "demo01",
+        component: () => import("views/d3/case/areaChart/demo01")
+      },
+      {
+        path: "demo02",
+        component: () => import("views/d3/case/areaChart/demo02")
+      }
+    ]
+  },
+  {
+    path: "relation",
+    component: () => import("views/d3/case/relation/")
+  },
+  {
+    path: "relation2",
+    component: () => import("views/d3/case/relation/relation2")
   }
 ];

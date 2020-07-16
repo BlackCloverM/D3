@@ -66,7 +66,7 @@ export default {
     gy.selectAll("line").attr("stroke-width", 0.5);
     gy.selectAll("path").attr("stroke-width", 0);
     //画面积函数
-    var area_generator = d3
+    let area_generator = d3
       .area()
       .x(function(d) {
         return xScale(d.x);
@@ -74,17 +74,13 @@ export default {
       .y0(500) //面积的高度
       .y1(function(d) {
         return yScale(d.y);
-      })
-      .curve(d3.curveMonotoneX); //改变线的样式
+      });
+    // .curve(d3.curveMonotoneX); //改变线的样式
     //画面积
-    // console.log(area_generator(this.dotData));
     g.append("path")
       .attr("d", area_generator(this.dotData)) //d="M1,0L20,40.....  d-path data
-      .style("fill", "steelblue")
+      .attr("fill", "steelblue")
       .attr("transform", "translate(" + leftLine + ", " + 100 + ")");
-  },
-  methods: {}
+  }
 };
 </script>
-
-<style lang="scss" scoped></style>

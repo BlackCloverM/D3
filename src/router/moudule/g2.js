@@ -1,9 +1,11 @@
-import Histogram from "views/g2/case/histogram";
-
 export default [
   {
     path: "/",
-    name: "g2histogram",
-    component: Histogram
+    redirect: "/g2/histogram"
+  },
+  {
+    path: "histogram",
+    name: "g2Histogram",
+    component: () => import("views/g2/case/histogram")
   }
 ];

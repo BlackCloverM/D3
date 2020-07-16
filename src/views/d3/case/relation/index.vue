@@ -1,82 +1,99 @@
 <template>
   <div>
-    <h3>力导图</h3>
-    <svg width="800" height="600"></svg>
+    <h3>关系图</h3>
+    <svg width="1000" height="400"></svg>
   </div>
 </template>
 
 <script>
 import * as d3 from "d3";
 export default {
-  data() {
-    return {
-      nodes: [
-        { name: "香泉" },
-        { name: "北川新县城" },
-        { name: "桃龙" },
-        { name: "泸州" },
-        { name: "田田" },
-        { name: "二少爷" },
-        { name: "小杜" },
-        { name: "臭憨憨" },
-        { name: "管理员" }
-      ],
-      edges: [
-        //value控制线的长短,source和target为nodes的下标（即连线的规则）
-        { source: 0, target: 5, relation: "籍贯", value: 1.3 },
-        { source: 4, target: 5, relation: "基友", value: 2 },
-        { source: 4, target: 6, relation: "父子", value: 2 },
-        { source: 4, target: 7, relation: "❤", value: 2 },
-        { source: 1, target: 4, relation: "籍贯", value: 2 },
-        { source: 2, target: 6, relation: "籍贯", value: 0.9 },
-        { source: 3, target: 7, relation: "籍贯", value: 2 },
-        { source: 5, target: 6, relation: "闺蜜", value: 1.6 },
-        { source: 6, target: 7, relation: "塑料姐妹", value: 2 },
-        { source: 5, target: 8, relation: "职责", value: 2 }
-      ]
-    };
-  },
   mounted() {
+    let nodes = [{ name: "二少爷" }, { name: "北川" }, { name: "刘田" }];
+    let edges = [
+      //value控制线的长短,source和target为nodes的下标（即连线的规则）
+      { source: 0, target: 1, relation: "籍贯", value: 2 },
+      { source: 0, target: 2, relation: "基友", value: 2 },
+      { source: 1, target: 2, relation: "住址", value: 2 }
+    ];
     let svg = d3.select("svg");
     let width = svg.attr("width");
     let height = svg.attr("height");
-    let g = svg.append("g");
+    let g = svg.append("g").attr("transform", `translate(${40}, ${60})`);
     let colorScale = d3
       .scaleOrdinal()
-      .domain(d3.range(this.nodes.length))
+      .domain(edges.length)
       .range(d3.schemeCategory10);
+
+    // 缩放
+    let zoom = d3
+      .zoom()
+      .scaleExtent([0.5, 3]) // 设置最小和最大的缩放比例
+      // 缩放过程中
+      .on("zoom", zoomed)
+      // 缩放开始时
+      .on("start", function() {
+        console.log("start");
+      })
+      // 缩放结束时
+      .on("end", function() {
+        console.log("end");
+      });
+    function zoomed() {
+      g.attr("transform", function() {
+        console.log("zoom");
+        // console.log(d3.event);
+        return d3.event.transform;
+      });
+    }
+    svg.call(zoom);
+
     let forceSimulation = d3
       .forceSimulation()
       .force("link", d3.forceLink()) //弹簧力模型
       .force("charge", d3.forceManyBody()) //电荷力模型
-      .force("center", d3.forceCenter()); //向心力模型
+      .force(
+        "center",
+        d3
+          .forceCenter()
+          .x(width / 2)
+          .y(height / 2)
+      ); //向心力模型  同时绑定中心位置
 
     //生成节点数据
-    forceSimulation.nodes(this.nodes);
-    console.table(this.nodes);
+    forceSimulation.nodes(nodes);
+
+    console.table(nodes);
+
     //生成边集数据
-    forceSimulation
-      .force("link")
-      .links(this.edges)
-      .distance(function(d) {
+    forceSimulation.force(
+      "link",
+      d3.forceLink(edges).distance(function(d) {
         return d.value * 100;
-      });
-    console.table(this.edges);
-    // forceSimulation.alphaMin(0.01);
+      })
+    );
+
+    // console.table(edges);
+
+    // 布局计算 手动控制计算次数
+    for (let i = 0, n = 30; i < n; ++i) {
+      forceSimulation.tick();
+    }
+
     // forceSimulation.stop();
     // forceSimulation.restart();
 
-    //设置图形的中心位置
-    forceSimulation
-      .force("center")
-      .x(width / 2)
-      .y(height / 2);
+    // 固定节点
+    nodes.map(value => {
+      value.fx = value.x;
+      value.fy = value.y;
+    });
 
     //绘制边
     let links = g
       .append("g")
       .selectAll("line")
-      .data(this.edges)
+      .data(edges)
       .enter()
       .append("line")
       .attr("stroke", function(d, i) {
@@ -88,7 +105,7 @@ export default {
     let linkTexts = g
       .append("g")
       .selectAll("text")
-      .data(this.edges)
+      .data(edges)
       .enter()
       .append("text")
       .text(function(d) {
@@ -99,7 +116,7 @@ export default {
     let gs = g
       .append("g")
       .selectAll(".circleText")
-      .data(this.nodes)
+      .data(nodes)
       .enter()
       .append("g");
 
@@ -176,9 +193,15 @@ export default {
         forceSimulation.alphaTarget(0);
       }
       //节点解除固定
-      d.fx = null;
-      d.fy = null;
+      // d.fx = null;
+      // d.fy = null;
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+svg {
+  border: 1px solid red;
+}
+</style>

@@ -93,7 +93,6 @@ export default {
         return yScale(d.y);
       });
     // .curve(d3.curveMonotoneX);//转换成曲线
-    console.log(line_generator(this.dotData));
     //画路径
     g.append("path")
       .attr("d", line_generator(this.dotData))
