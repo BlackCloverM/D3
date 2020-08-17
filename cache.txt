@@ -1,0 +1,75 @@
+<template>
+  <div id="app">
+    <div>
+      <router-link to="/">demo</router-link> |
+      <router-link to="/d3">D3</router-link> |
+      <router-link to="/g2">G2</router-link> |
+      <router-link to="/echarts">Echarts</router-link> |
+      <router-link to="/vue-echarts">Vue-echarts</router-link> |
+    </div>
+    <router-view></router-view>
+  </div>
+</template>
+
+<template>
+  <div>
+    <el-row class="tac">
+      <el-col :span="12">
+        <h5>数据可视化</h5>
+        <el-menu
+          mode="horizontal"
+          default-active="1"
+          class="el-menu-vertical-demo"
+          @open="handleOpen"
+          @close="handleClose"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+        >
+          <el-menu-item index="1">
+            <i class="el-icon-location"></i>
+            <router-link tag="span" to="/">demo</router-link>
+          </el-menu-item>
+          <el-submenu index="2">
+            <template slot="title">
+              <i class="el-icon-menu"></i>
+              <router-link tag="span" to="/d3">D3</router-link>
+            </template>
+          </el-submenu>
+          <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-document"></i>
+              <router-link tag="span" to="/g2">G2</router-link>
+            </template>
+          </el-submenu>
+          <el-submenu index="4">
+            <template slot="title">
+              <i class="el-icon-s-promotion"></i>
+              <router-link tag="span" to="/echarts">Echarts</router-link>
+            </template>
+          </el-submenu>
+          <el-submenu index="5">
+            <template slot="title">
+              <i class="el-icon-setting"></i>
+              <router-link tag="span" to="/echarts">Echarts</router-link>
+            </template>
+          </el-submenu>
+        </el-menu>
+      </el-col>
+    </el-row>
+    <router-view></router-view>
+  </div>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    }
+  }
+};
+</script>

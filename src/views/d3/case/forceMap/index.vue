@@ -53,7 +53,7 @@ export default {
 
     //生成节点数据
     forceSimulation.nodes(this.nodes);
-    console.table(this.nodes);
+    // console.table(this.nodes);
     //生成边集数据
     forceSimulation
       .force("link")
@@ -61,7 +61,7 @@ export default {
       .distance(function(d) {
         return d.value * 100;
       });
-    console.table(this.edges);
+    // console.table(this.edges);
     // forceSimulation.alphaMin(0.01);
     // forceSimulation.stop();
     // forceSimulation.restart();
@@ -96,6 +96,7 @@ export default {
       });
 
     //将节点和文字放在同一个组内
+    //绘制节点
     let gs = g
       .append("g")
       .selectAll(".circleText")
@@ -103,7 +104,6 @@ export default {
       .enter()
       .append("g");
 
-    //绘制节点
     gs.append("circle")
       .attr("r", 10)
       .attr("fill", function(d, i) {

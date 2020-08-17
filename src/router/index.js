@@ -1,44 +1,26 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Demo from "views/";
-import D3 from "views/d3";
-import d3Children from "./moudule/d3";
-import Echarts from "views/echarts";
-import echartChildren from "./moudule/echarts";
-import vueEcharts from "views/vue-echarts";
-import vueEchartChildren from "./moudule/vue-echarts";
-import G2 from "views/g2";
-import g2children from "./moudule/g2";
+import d3 from "./moudule/d3";
+import echarts from "./moudule/echarts";
+import vueEcharts from "./moudule/vue-echarts";
+import g2 from "./moudule/g2";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 Vue.use(VueRouter);
 
-const routes = [
+export const routes = [
   {
     path: "/",
+    name: "Demo",
+    icon: "el-icon-location",
     component: Demo
   },
-  {
-    path: "/d3",
-    component: D3,
-    children: d3Children
-  },
-  {
-    path: "/g2",
-    component: G2,
-    children: g2children
-  },
-  {
-    path: "/echarts",
-    component: Echarts,
-    children: echartChildren
-  },
-  {
-    path: "/vue-echarts",
-    component: vueEcharts,
-    children: vueEchartChildren
-  }
+  d3,
+  echarts,
+  vueEcharts,
+  g2
 ];
 
 const router = new VueRouter({
@@ -53,5 +35,10 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   NProgress.done();
 });
+// 解决路由被重复点击时报错问题 编程式导航
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 
 export default router;
