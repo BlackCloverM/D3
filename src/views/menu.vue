@@ -58,7 +58,7 @@ export default {
       router.map(value => {
         let p = path ? path + "/" + value.path : value.path;
         menus.push({
-          name: value.name,
+          name: value.title,
           path: p,
           icon: value.icon,
           children:

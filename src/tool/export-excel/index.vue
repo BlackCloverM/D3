@@ -1,49 +1,62 @@
 <template>
-  <div>
-    <!-- <div class="wrapper" ref="wrapper">{{ result }}</div> -->
-    <el-button :loading="loading" @click="handleClick">{{ title }}</el-button>
-  </div>
+  <el-button
+    :type="buttonType"
+    :size="buttonSize"
+    :loading="loading"
+    @click="handleClick"
+    :disabled="disabled"
+    >{{ title }}</el-button
+  >
 </template>
+
 <script>
-import Son from "./son";
 import XLSX from "xlsx";
 export default {
-  data() {
-    return {
-      loading: false,
-      fileName: "test",
-      config: {
-        includes: ["intimacy", "object", "dimension"],
-        formatters: {
-          intimacy: {
-            title: "亲密度"
-          },
-          object: {
-            title: "对象",
-            width: 150
-          },
-          dimension: {
-            title: "维度记录",
-            width: 400
-          }
-        }
-      },
-      fnGetData: [
-        {
-          intimacy: 92,
-          object: "孙德利 与 汪勇",
-          dimension:
-            "同行-飞机:3,  银行卡转账:81,  同住:1,  同行-大巴:3,  同行-火车:4"
-        },
-        {
-          intimacy: 81,
-          object: "孙德利 与 吴建立公司",
-          dimension: "投资:1,  银行卡转账:80"
-        }
-      ],
-      orderNum: true,
-      title: "导出"
-    };
+  name: "kr_excel_export",
+  props: {
+    // 是否添加序号列
+    orderNum: {
+      type: Boolean,
+      default: true
+    },
+    // 是否禁用
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    // 按钮类型
+    buttonType: {
+      type: String,
+      default: ""
+    },
+    // 按钮尺寸
+    buttonSize: {
+      type: String,
+      default: ""
+    },
+    // 表单名称
+    fileName: {
+      type: String,
+      default: "全部列表.xlsx"
+    },
+    // 获取数据
+    fnGetData: {
+      type: Function,
+      default: () => {},
+      required: true
+    },
+    // 配置
+    config: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    // 按钮文字
+    title: {
+      type: String,
+      default: "导出"
+    }
   },
   computed: {
     formatters() {
@@ -62,15 +75,18 @@ export default {
       }
     }
   },
-  mounted() {},
-  components: {},
+  data() {
+    return {
+      loading: false
+    };
+  },
   methods: {
-    handleClick() {
+    async handleClick() {
       if (!this.fnGetData || this.loading) {
         return;
       }
       this.loading = true;
-      const resData = this.fnGetData; // 获取列表信息
+      const resData = await this.fnGetData(); // 获取列表信息
       this.loading = false;
       if (!resData) {
         this.$message.error("导出数据失败！");
@@ -83,6 +99,7 @@ export default {
 
       const newAllList = this.exportDataFilter(
         resData,
+        // testManyData,
         this.includes,
         this.formatters
       ); // 数据构造
@@ -105,37 +122,12 @@ export default {
         });
       }
     },
-    exportDataFilter(list, includes, formatters) {
-      const newList = [];
-      const header = this.orderNum ? ["序号"] : [];
-      // 构造标题组
-      includes.map(item => {
-        if (formatters[item] && formatters[item].title) {
-          header.push(formatters[item].title);
-        } else {
-          header.push(item);
-        }
-      });
 
-      newList.push(header);
-
-      // 筛选相应字段的数据，并格式化
-      list.map((item, index) => {
-        const temp = this.orderNum ? [index + 1] : [];
-        includes.map(it => {
-          const value = item[it];
-          if (formatters[it] && formatters[it].formatter) {
-            temp.push(formatters[it].formatter(value, item));
-          } else {
-            temp.push(value);
-          }
-        });
-        console.log({ temp });
-        newList.push(temp);
-      });
-      console.log({ newList });
-      return newList;
-    },
+    /**
+     * @description 文件下载
+     * @param {string, blob} url 下载链接，或是一个 blob 对象
+     * @param {string} fileName 保存的文件名
+     */
     downloadExcelFlie(url, fileName = "列表.xlsx") {
       if (typeof url == "object" && url instanceof Blob) {
         url = URL.createObjectURL(url); // 创建 blob地址
@@ -150,6 +142,12 @@ export default {
       aLink.click();
       aLink.remove();
     },
+
+    /**
+     * @description 将 sheet 对象转换成 blob 类型
+     * @param {sheet} sheet sheet对象
+     * @param {string} sheetName 表名
+     */
     sheet2blob(sheet, sheetName) {
       sheetName = sheetName || "sheet1";
       const workbook = {
@@ -180,6 +178,43 @@ export default {
       }
       return blob;
     },
+
+    /**
+     * @description 筛选出需要导出的字段，并格式化
+     * @param {Array} list 被筛选数据
+     * @param {Array} titles 字段名数组
+     */
+    exportDataFilter(list, includes, formatters) {
+      const newList = [];
+      const header = this.orderNum ? ["序号"] : [];
+      // 构造标题组
+      includes.map(item => {
+        if (formatters[item] && formatters[item].title) {
+          header.push(formatters[item].title);
+        } else {
+          header.push(item);
+        }
+      });
+      newList.push(header);
+
+      // 筛选相应字段的数据，并格式化
+      list.map((item, index) => {
+        const temp = this.orderNum ? [index + 1] : [];
+        includes.map(it => {
+          const value = item[it];
+
+          if (formatters[it] && formatters[it].formatter) {
+            temp.push(formatters[it].formatter(value, item));
+          } else {
+            temp.push(value);
+          }
+        });
+        newList.push(temp);
+      });
+      return newList;
+    },
+
+    // 获取当前时间
     getCurrentTime() {
       const date = new Date();
       const year = date.getFullYear();
@@ -202,14 +237,8 @@ export default {
         .padStart(2, "0");
       return `${year}${month}${day}${hour}${minute}${second}`;
     }
-  },
-  watch: {}
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-.wrapper {
-  height: 500px;
-  /* background-color: blueviolet; */
-}
-</style>
+<style lang="scss" module></style>

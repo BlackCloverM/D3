@@ -14,6 +14,7 @@ export const routes = [
   {
     path: "/",
     name: "Demo",
+    title: "Demo",
     icon: "el-icon-location",
     component: Demo
   },
