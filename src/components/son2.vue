@@ -8,12 +8,12 @@
 export default {
   data() {
     return {
-      name: "son"
+      name: "son2"
     };
   },
   methods: {
     logName() {
-      console.log("son!!");
+      console.log("son2!!");
     }
   }
 };

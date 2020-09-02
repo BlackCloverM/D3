@@ -1,6 +1,6 @@
 <template>
   <div>
-    子组件
+    <el-button @click="logName">son3</el-button>
   </div>
 </template>
 
@@ -8,12 +8,13 @@
 export default {
   data() {
     return {
-      name: "son"
+      name: "son3"
     };
   },
+  props: ["flag"],
   methods: {
     logName() {
-      console.log("son!!");
+      console.log(this.$attrs);
     }
   }
 };
